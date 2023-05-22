@@ -3,6 +3,33 @@ import React from 'react';
 
 
 const Card = ({ record }) => {
+  let tipo_san = record.tipo_sangre;
+  console.log(tipo_san)
+  const getBloodTypeImage = (tipo_san) => {
+    switch (tipo_san) {
+      case 1:
+        return '../../public/Assets.xcassets/A+.imageset/A+.png';
+      case 2:
+        return '../../public/Assets.xcassets/A-.imageset/A-.png';
+      case 3:
+        return '../../public/Assets.xcassets/B+.imageset/B+.png';
+      case 4:
+        return '../../public/Assets.xcassets/B-.imageset/B-.png';
+      case 5:
+        return '../../public/Assets.xcassets/O+.imageset/O+.png';
+      case 6:
+        return '../../public/Assets.xcassets/O-.imageset/O-.png';
+      case 7:
+        return '../../public/Assets.xcassets/AB+.imageset/AB+.png';
+      case 8:
+        return '../../public/Assets.xcassets/AB-.imageset/AB-.png';
+      default:
+        return 'default.png';
+    }
+  };
+
+  const bloodTypeImage = getBloodTypeImage(record.tipo_sangre);
+  
   return (
     <div className="w-[300px] h-[400px] bg-white text-black flex flex-col justify-between rounded-lg p-4 " key={record.id}>
       <div className="flex justify-between">
@@ -35,7 +62,7 @@ const Card = ({ record }) => {
       </div>
       <div className="flex justify-between">
         <div id="sangre">Tipo de sangre:</div>
-        <div id="tipo">{record.tipo_sangre}</div>
+        <div id="tipo">  <img src={bloodTypeImage} alt={record.tipo_sangre} width={"30px"} height={"30px"} /></div>
       </div>
       <div className="flex justify-between">
         <div id="volumenes">Volumenes requeridos: </div>
