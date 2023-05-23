@@ -1,46 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import axios from 'axios';
 import Card from './Card';
-import { GET_SOLICITUDES } from '../graphql/queries';
 
 const Main = () => {
-  const { loading, error, data } = useQuery(GET_SOLICITUDES);
+  const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
-    if (data) {
-      setFilteredData(data.solicitudes);
-    }
-  }, [data]);
+    getAndSetData();
+  }, []);
+
+  const getAndSetData = () => {
+    axios.get('http://192.168.16.90:8000/api/solicitudes')
+      .then(response => {
+        console.log('API request succeeded');
+        console.log(response.data.data);
+        setData(response.data.data);
+      })
+      .catch(error => {
+        console.log('API request failed');
+        console.log(error);
+      });
+  };
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
     if (!isChecked) {
-      const filtered = data.solicitudes.filter(record => record.creado_por === 50);
+      const filtered = data.filter(record => record.creado_por === 50);
       setFilteredData(filtered);
     } else {
-      setFilteredData(data.solicitudes);
+      getAndSetData();
+      setFilteredData([]);
     }
   };
-
+  
   const renderCards = () => {
-    const records = isChecked ? filteredData : data?.solicitudes || [];
+    const records = isChecked ? filteredData : data;
     return records.map(record => (
       <Card key={record.id} record={record} />
     ));
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
   return (
-    <div className="w-screen h-full bg-red-600 grid place-items-center gap-6 p-8">
+    <div className=" w-screen h-full bg-red-600 grid place-items-center gap-6 p-8">
       <label>
         <div className="flex" id="checks">
           <input
@@ -60,7 +63,7 @@ const Main = () => {
           </label>
         </div>
       </label>
-      {renderCards()}
+    {renderCards()}
     </div>
   );
 };
